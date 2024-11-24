@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createEvent } from 'ics';
+import { createEvents } from 'ics';
 import React, { useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
 import { toast } from 'react-toastify';
@@ -23,10 +23,8 @@ const Form = ({ handleIcsResult }) => {
     }
 
     try {
-      // OPEN API 호출하는 방식
       const solarDates = await fetchSolarDates(month.padStart(2, '0'), day.padStart(2, '0'));
-      console.log(solarDates);
-      //   generateICS(Number(solYear), Number(solMonth), Number(solDay));
+      generateICS(solarDates);
     } catch (error) {
       console.error('Error fetching solar date:', error);
       toast.error('데이터를 불러오는 중 문제가 발생했습니다.');
@@ -50,7 +48,7 @@ const Form = ({ handleIcsResult }) => {
 
           const { solYear, solMonth, solDay } = solDate;
 
-          solarDates.push({ year: parseInt(solYear), month: parseInt(solMonth), day: parseInt(solDay) });
+          solarDates.push({ solYear: parseInt(solYear), solMonth: parseInt(solMonth), solDay: parseInt(solDay) });
         } else {
           toast.error(`${repYear}년의 양력 날짜를 찾을 수 없습니다.`);
         }
@@ -63,20 +61,25 @@ const Form = ({ handleIcsResult }) => {
     return solarDates;
   };
 
-  const generateICS = (solYear, solMonth, solDay) => {
-    const event = {
+  const generateICS = (solarDates) => {
+    const events = solarDates.map(({ solYear, solMonth, solDay }) => ({
       start: [solYear, solMonth, solDay],
-      title
-    };
+      title,
+      description: `양력 날짜: ${solYear}년 ${solMonth}월 ${solDay}일\n 음력 날짜: ${solYear}년 ${month}월 ${day}일`,
+      uid: `lunarcal-${solYear}${solYear}${solDay}@example.com`
+    }));
 
-    createEvent(event, (error, value) => {
+    createEvents(events, (error, value) => {
       if (error) {
         console.error(error);
         toast.error('ICS 파일을 생성할 수 없습니다');
         return;
       }
 
-      console.log(value);
+      if (typeof value !== 'string') {
+        toast.error('잘못된 데이터 형식입니다.');
+        return;
+      }
 
       handleIcsResult(value);
     });
