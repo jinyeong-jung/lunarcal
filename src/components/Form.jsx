@@ -146,15 +146,23 @@ const Form = ({ handleEvents, handleIcsResult }) => {
   return (
     <div>
       <h4 className="text-xl font-bold text-gray-700">음력 일정</h4>
-      <p className="mb-5 mt-2 text-sm font-normal leading-relaxed text-green-400">
-        1. 반복할 음력 일정을 입력하세요.
-        <br />
-        2. 다른 일정을 추가하려면 '일정 추가하기'를 클릭하세요. ('현재 추가한 음력 일정' 참고)
-        <br />
-        3. 일정을 원하는 만큼 추가했다면 ICS 파일을 생성하세요.
-        <br />
-        4. ICS 캘린더를 다운로드하세요!
-      </p>
+      <div className="mb-5 mt-2 flex flex-col gap-2 text-sm font-normal text-gray-400">
+        {Array.from(
+          [
+            '음력 일정(날짜, 일정 제목, 반복 횟수)을 작성하세요.',
+            '새로운 일정을 추가하려면 "일정 추가하기" 버튼을 클릭하세요. (기존에 작성한 일정은 "현재 추가한 음력 일정"에 반영됩니다)',
+            '일정을 원하는 만큼 추가했다면 ICS 파일을 생성하세요.',
+            'ICS 캘린더를 다운로드하세요!',
+            'ICS 캘린더를 구글에 연동하는 방법은 우측 하단의 인포 버튼을 클릭하세요.'
+          ],
+          (v, i) => (
+            <div className="flex items-start gap-2" key={i}>
+              <span>{i + 1}.</span>
+              <span>{v}</span>
+            </div>
+          )
+        )}
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
