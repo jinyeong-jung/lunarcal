@@ -20,15 +20,28 @@ h3,
 h4,
 h5,
 h6 {
-  @apply font-plex font-bold text-gray-700;
+  @apply font-plex font-bold;
 }
 
 @layer components {
   .input {
-    @apply w-full rounded border border-gray-100 px-5 py-3 text-sm font-normal transition-colors focus:border-green-500 focus:outline-none;
+    @apply w-full rounded border border-gray-200 px-5 py-3 text-sm font-normal transition-colors focus:border-green-500 focus:outline-none;
+  }
+
+  .input-label {
+    @apply mb-1 block text-sm font-normal text-gray-700;
+  }
+
+  .input-example {
+    @apply mt-1 block text-xs font-normal text-gray-400;
   }
 
   .btn {
-    @apply cursor-pointer rounded-md transition-colors px-8 py-3.5 text-base bg-green-500 text-white;
+    @apply cursor-pointer rounded-md bg-green-500 px-8 py-3.5 text-base text-white transition-colors;
   }
+}
+
+/* Toastify */
+.Toastify__toast-body {
+  @apply font-plex font-normal text-gray-700;
 }
