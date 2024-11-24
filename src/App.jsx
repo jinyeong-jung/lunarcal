@@ -7,6 +7,7 @@ import Result from './components/Result';
 import Info from './components/Info';
 
 function App() {
+  const [events, setEvents] = useState([]);
   const [icsResult, setIcsResult] = useState();
 
   const download = (value) => {
@@ -26,8 +27,8 @@ function App() {
 
       <div className="mx-auto max-w-screen-2xl px-6 py-10 sm:px-8 lg:px-10 lg:py-16">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
-          <Form handleIcsResult={(value) => setIcsResult(value)} />
-          <Result icsResult={icsResult} handleDownload={() => download(icsResult)} />
+          <Form handleEvents={(value) => setEvents(value)} handleIcsResult={(value) => setIcsResult(value)} />
+          <Result events={events} icsResult={icsResult} handleDownload={() => download(icsResult)} />
         </div>
 
         <Info />
