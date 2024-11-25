@@ -41,11 +41,9 @@ function App() {
       )}
 
       <div
-        className={
-          loading
-            ? 'pointer-events-none'
-            : 'mx-auto grid max-w-screen-2xl grid-cols-1 gap-10 px-6 py-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-16'
-        }
+        className={`mx-auto grid max-w-screen-2xl grid-cols-1 gap-10 px-6 py-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-16 ${
+          loading ? 'pointer-events-none' : ''
+        }`}
       >
         <Form
           setLoading={setLoading}
