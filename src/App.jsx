@@ -28,16 +28,25 @@ function App() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" area-busy={loading ? 'true' : 'false'}>
       <Header />
 
       {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10">
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10"
+          area-hidden={loading ? 'true' : 'false'}
+        >
           <LoadingSpinner />
         </div>
       )}
 
-      <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-10 px-6 py-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-16">
+      <div
+        className={
+          loading
+            ? 'pointer-events-none'
+            : 'mx-auto grid max-w-screen-2xl grid-cols-1 gap-10 px-6 py-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-16'
+        }
+      >
         <Form
           setLoading={setLoading}
           handleEvents={(value) => setEvents(value)}

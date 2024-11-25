@@ -20,8 +20,6 @@ const Form = ({ setLoading, handleEvents, handleIcsResult }) => {
   useEffect(() => {
     if (events.length > 0) {
       handleEvents(events);
-
-      console.log(events);
     }
   }, [events]);
 
