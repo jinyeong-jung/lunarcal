@@ -55,7 +55,7 @@ function App() {
 
       <button
         onClick={() => setIsInfoOpen((prev) => !prev)}
-        className="fixed bottom-10 right-10 flex h-16 w-16 items-center justify-center rounded-full bg-green-500 px-4 py-2 text-white shadow-lg transition-colors duration-300 hover:bg-green-600"
+        className="fixed bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-green-500 px-4 py-2 text-white shadow-lg transition-colors duration-300 hover:bg-green-600 md:bottom-10 md:right-10 md:h-16 md:w-16"
       >
         <GrInfo size={24} />
       </button>

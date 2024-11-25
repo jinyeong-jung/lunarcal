@@ -37,7 +37,7 @@ h6 {
   }
 
   .btn {
-    @apply cursor-pointer rounded-md bg-green-500 px-8 py-3.5 text-base text-white transition-colors;
+    @apply cursor-pointer rounded-md bg-green-500 px-6 py-3 text-sm text-white transition-colors md:px-8 md:py-3.5 md:text-base;
   }
 }
 

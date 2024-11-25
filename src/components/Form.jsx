@@ -202,14 +202,19 @@ const Form = ({ setLoading, handleEvents, handleIcsResult }) => {
           <div className="flex items-center gap-2">
             <input
               type="number"
-              className="input w-36"
+              className="input max-w-36"
               value={startYear}
               onChange={(e) => setStartYear(e.target.value)}
             />
-            <div className="text-sm text-gray-500">년부터</div>
+            <div className="whitespace-nowrap text-sm text-gray-500">년부터</div>
 
-            <input type="number" className="input w-36" value={endYear} onChange={(e) => setEndYear(e.target.value)} />
-            <div className="text-sm text-gray-500">년까지</div>
+            <input
+              type="number"
+              className="input max-w-36"
+              value={endYear}
+              onChange={(e) => setEndYear(e.target.value)}
+            />
+            <div className="whitespace-nowrap text-sm text-gray-500">년까지</div>
           </div>
           <div className="input-example leading-relaxed">
             <span className="font-semibold text-green-500">최대 2050년까지만 입력하실 수 있습니다.</span>
