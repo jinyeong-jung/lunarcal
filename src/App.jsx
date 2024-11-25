@@ -6,8 +6,11 @@ import Header from './components/Header';
 import Form from './components/Form';
 import Result from './components/Result';
 import InfoModal from './components/InfoModal';
+import LoadingSpinner from './components/LoadingSpinner';
 
 function App() {
+  const [loading, setLoading] = useState(false);
+
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   const [events, setEvents] = useState([]);
@@ -28,8 +31,18 @@ function App() {
     <div className="relative">
       <Header />
 
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10">
+          <LoadingSpinner />
+        </div>
+      )}
+
       <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-10 px-6 py-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-16">
-        <Form handleEvents={(value) => setEvents(value)} handleIcsResult={(value) => setIcsResult(value)} />
+        <Form
+          setLoading={setLoading}
+          handleEvents={(value) => setEvents(value)}
+          handleIcsResult={(value) => setIcsResult(value)}
+        />
         <Result events={events} icsResult={icsResult} handleDownload={() => download(icsResult)} />
       </div>
 

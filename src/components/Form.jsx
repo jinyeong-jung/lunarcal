@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 const openApiUrl = import.meta.env.VITE_OPENAPI_URL;
 const serviceKey = import.meta.env.VITE_OPENAPI_SERVICE_KEY;
 
-const Form = ({ handleEvents, handleIcsResult }) => {
+const Form = ({ setLoading, handleEvents, handleIcsResult }) => {
   const [title, setTitle] = useState('');
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
@@ -20,6 +20,8 @@ const Form = ({ handleEvents, handleIcsResult }) => {
   useEffect(() => {
     if (events.length > 0) {
       handleEvents(events);
+
+      console.log(events);
     }
   }, [events]);
 
@@ -29,7 +31,7 @@ const Form = ({ handleEvents, handleIcsResult }) => {
     setMonth('');
     setDay('');
     setStartYear(new Date().getFullYear());
-    setStartYear(new Date().getFullYear());
+    setEndYear(new Date().getFullYear() + 5);
   };
 
   const handleAddEvent = async (e) => {
@@ -47,6 +49,7 @@ const Form = ({ handleEvents, handleIcsResult }) => {
       return toast.error('2050년 이하의 연도를 입력해주세요');
     }
 
+    setLoading(true);
     try {
       const solarDates = await fetchSolarDates(month.padStart(2, '0'), day.padStart(2, '0'));
 
@@ -70,6 +73,8 @@ const Form = ({ handleEvents, handleIcsResult }) => {
     } catch (error) {
       console.error('Error adding event:', error);
       toast.error('일정을 추가하는 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,6 +122,7 @@ const Form = ({ handleEvents, handleIcsResult }) => {
   };
 
   const generateICS = () => {
+    setLoading(true);
     try {
       const icsEvents = events.flatMap(({ title, solarDates, lunarDate: { month, day } }) =>
         solarDates.map(({ solYear, solMonth, solDay }) => ({
@@ -145,6 +151,8 @@ const Form = ({ handleEvents, handleIcsResult }) => {
       console.error('generateICS 실행 중 오류:', error);
       toast.error('ICS 파일 생성 중 문제가 발생했습니다.');
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
