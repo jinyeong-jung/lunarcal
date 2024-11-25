@@ -24,7 +24,7 @@ const Result = ({ events, icsResult, handleDownload }) => {
                   </div>
 
                   <div className="text-sm">
-                    {event.startYear}년부터 {event.repNum}년간 반복
+                    {event.startYear}년부터 {event.endYear}년까지 매년 반복
                   </div>
                 </div>
               </div>

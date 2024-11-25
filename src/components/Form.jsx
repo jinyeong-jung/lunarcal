@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { createEvents } from 'ics';
 import React, { useEffect, useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
 import { toast } from 'react-toastify';
 
 const openApiUrl = import.meta.env.VITE_OPENAPI_URL;
@@ -12,8 +11,9 @@ const Form = ({ handleEvents, handleIcsResult }) => {
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
   const [day, setDay] = useState('');
+
   const [startYear, setStartYear] = useState(new Date().getFullYear());
-  const [repNum, setRepNum] = useState(5);
+  const [endYear, setEndYear] = useState(new Date().getFullYear() + 5);
 
   const [events, setEvents] = useState([]);
 
@@ -29,14 +29,22 @@ const Form = ({ handleEvents, handleIcsResult }) => {
     setMonth('');
     setDay('');
     setStartYear(new Date().getFullYear());
-    setRepNum(5);
+    setStartYear(new Date().getFullYear());
   };
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
 
-    if (!title || !year || !month || !day || !startYear || !repNum) {
+    if (!title || !year || !month || !day || !startYear || !endYear) {
       return toast.error('모든 항목을 입력해주세요');
+    }
+
+    if (startYear > endYear) {
+      return toast.error('반복 연도를 올바르게 입력해주세요');
+    }
+
+    if (endYear > 2050) {
+      return toast.error('2050년 이하의 연도를 입력해주세요');
     }
 
     try {
@@ -53,7 +61,7 @@ const Form = ({ handleEvents, handleIcsResult }) => {
             day: parseInt(day)
           },
           startYear,
-          repNum
+          endYear
         }
       ]);
 
@@ -66,29 +74,26 @@ const Form = ({ handleEvents, handleIcsResult }) => {
   };
 
   const fetchSolarDates = async (lunarMonth, lunarDay) => {
-    const repYears = Array.from({ length: repNum }, (_, i) => startYear + i);
     const solarDates = [];
+    const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
 
-    for (const repYear of repYears) {
+    for (const currentYear of years) {
       try {
         const response = await axios.get(
-          `${openApiUrl}?lunYear=${repYear}&lunMonth=${lunarMonth}&lunDay=${lunarDay}&ServiceKey=${serviceKey}`
+          `${openApiUrl}?lunYear=${currentYear}&lunMonth=${lunarMonth}&lunDay=${lunarDay}&ServiceKey=${serviceKey}`
         );
 
-        if (response.status === 200 && response.data?.response?.body?.items?.item) {
-          const solDate = Array.isArray(response.data.response.body.items.item)
-            ? response.data.response.body.items.item[0]
-            : response.data.response.body.items.item;
+        const items = response.data?.response?.body?.items?.item;
 
-          const { solYear, solMonth, solDay } = solDate;
-
-          solarDates.push({ solYear: parseInt(solYear), solMonth: parseInt(solMonth), solDay: parseInt(solDay) });
+        if (response.status === 200 && items) {
+          const { solYear, solMonth, solDay } = Array.isArray(items) ? items[0] : items;
+          solarDates.push({ solYear: Number(solYear), solMonth: Number(solMonth), solDay: Number(solDay) });
         } else {
-          toast.error(`${repYear}년의 양력 날짜를 찾을 수 없습니다.`);
+          toast.error(`${currentYear}년의 양력 날짜를 찾을 수 없습니다.`);
         }
       } catch (error) {
-        console.error(`${repYear}년 데이터 요청 중 오류가 발생했습니다:`, error);
-        toast.error('데이터를 불러오는 중 문제가 발생했습니다.');
+        console.error(`오류 발생 (${currentYear}년):`, error);
+        toast.error(`${currentYear}년 데이터를 가져오는 중 문제가 발생했습니다.`);
       }
     }
 
@@ -149,7 +154,7 @@ const Form = ({ handleEvents, handleIcsResult }) => {
       <div className="mb-5 mt-2 flex flex-col gap-2 text-sm font-normal text-gray-400">
         {Array.from(
           [
-            '음력 일정(날짜, 일정 제목, 반복 횟수)을 작성하세요.',
+            '음력 일정(날짜, 일정 제목, 반복 연도)을 작성하세요.',
             '새로운 일정을 추가하려면 "일정 추가하기" 버튼을 클릭하세요. (기존에 작성한 일정은 "현재 추가한 음력 일정"에 반영됩니다)',
             '일정을 원하는 만큼 추가했다면 ICS 파일을 생성하세요.',
             'ICS 캘린더를 다운로드하세요!',
@@ -187,7 +192,7 @@ const Form = ({ handleEvents, handleIcsResult }) => {
         </div>
 
         <div>
-          <div className="input-label">반복 횟수</div>
+          <div className="input-label">반복 연도</div>
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -197,26 +202,15 @@ const Form = ({ handleEvents, handleIcsResult }) => {
             />
             <div className="text-sm text-gray-500">년부터</div>
 
-            <div className="relative w-36">
-              <select
-                className="input w-full appearance-none"
-                value={repNum}
-                onChange={(e) => setRepNum(e.target.value)}
-              >
-                {Array.from({ length: 30 }, (_, i) => i).map((num) => (
-                  <option key={num} value={num + 1}>
-                    {num + 1}
-                  </option>
-                ))}
-              </select>
-
-              <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-gray-500">
-                <IoIosArrowDown size={14} />
-              </span>
-            </div>
-            <span className="text-sm text-gray-500">회</span>
+            <input type="number" className="input w-36" value={endYear} onChange={(e) => setEndYear(e.target.value)} />
+            <div className="text-sm text-gray-500">년까지</div>
           </div>
-          <div className="input-example">예시: {new Date().getFullYear()}년부터 5회 반복</div>
+          <div className="input-example leading-relaxed">
+            <span className="font-semibold text-green-500">최대 2050년까지만 입력하실 수 있습니다.</span>
+            <br />
+            예시: {new Date().getFullYear() >= 2050 ? 2050 : new Date().getFullYear()}년부터{' '}
+            {new Date().getFullYear() + 5 >= 2050 ? 2050 : new Date().getFullYear() + 5}년까지 매년 반복
+          </div>
         </div>
 
         <div className="mt-3 flex justify-around gap-5">
